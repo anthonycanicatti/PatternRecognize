@@ -1,19 +1,21 @@
+package corpus;
+
 import java.awt.image.BufferedImage;
 
 /**
  * Created by anthony on 11/26/16.
  */
-public class Recognizer {
+public class ImageTransformer {
 
     private int imageHeight = -1, imageWidth = -1, gridSize = -1;
     private BufferedImage image;
 
     /**
-     * Recognizer constructor
+     * corpus.ImageTransformer constructor
      * @param image image to recognize
      * @param gridSize image will be partitioned into a grid - gridSize is the number of row/columns
      */
-    public Recognizer(BufferedImage image, int gridSize){
+    public ImageTransformer(BufferedImage image, int gridSize){
         this.image = image;
         this.imageHeight = image.getHeight();
         this.imageWidth = image.getWidth();
@@ -51,9 +53,9 @@ public class Recognizer {
      * Partition the image file into a matrix with gridSize rows and columns
      * for each block in the matrix, iterate over each pixel searching for black markings
      * if a marking is found, enter a 1 in the image's corresponding binary matrix
-     * @return a binary matrix with gridSize rows and columns, where 1 represents a marking
+     * @return a binary vector converted from a matrix with gridSize rows and columns
      */
-    public int[][] getMatrix(){
+    public int[] getInformationVector(){
         int[][] matrix = new int[gridSize][gridSize];
         int xBlockSize = imageWidth / gridSize;
         int yBlockSize = imageHeight / gridSize;
@@ -75,8 +77,15 @@ public class Recognizer {
                 matrix[j][i] = containsMarking(startX, endX, startY, endY) ? 1 : 0;
             }
         }
-        printMatrix(matrix);
-        return matrix;
+        int[] infoVector = new int[matrix.length*matrix.length];
+        int ivIndex = 0;
+        for(int i=0; i<matrix.length; i++){
+            for(int j=0; j<matrix.length; j++) {
+                infoVector[ivIndex] = matrix[i][j]; // very important: row-wise conversion from two dimensional matrix to vector
+                ivIndex++;
+            }
+        }
+        return infoVector;
     }
 
     /**

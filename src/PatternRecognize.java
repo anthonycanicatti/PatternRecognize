@@ -1,7 +1,4 @@
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import corpus.CorpusBuilder;
 
 /**
  * Created by anthony on 11/26/16.
@@ -9,14 +6,7 @@ import java.io.IOException;
 public class PatternRecognize {
 
     public static void main(String[] args){
-        String fileName = "img/4.jpg";
-        File f = new File(fileName);
-        try {
-            BufferedImage image = ImageIO.read(f);
-            Recognizer r = new Recognizer(image, 20);
-            int[][] matrix = r.getMatrix();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        CorpusBuilder cb = CorpusBuilder.createBuilder("img");
+        cb.buildCorpus();
     }
 }
