@@ -60,6 +60,7 @@ public class Recognizer {
         for(int i=0; i<gridSize; i++) { // iterating rows of the image
             int startX = i * xBlockSize;
             int endX;
+            // the dimensions may not line up exactly, so just make the last endX the remainder of the block
             if (i != gridSize - 1)
                 endX = (i + 1) * xBlockSize;
             else
