@@ -5,17 +5,19 @@ import java.awt.image.BufferedImage;
  */
 public class Recognizer {
 
-    private int imageHeight = -1, imageWidth = -1;
+    private int imageHeight = -1, imageWidth = -1, gridSize = -1;
     private BufferedImage image;
 
     /**
      * Recognizer constructor
      * @param image image to recognize
+     * @param gridSize image will be partitioned into a grid - gridSize is the number of row/columns
      */
-    public Recognizer(BufferedImage image){
+    public Recognizer(BufferedImage image, int gridSize){
         this.image = image;
         this.imageHeight = image.getHeight();
         this.imageWidth = image.getWidth();
+        this.gridSize = gridSize;
     }
 
     /**
@@ -45,4 +47,46 @@ public class Recognizer {
         return foundMark;
     }
 
+    /**
+     * Partition the image file into a matrix with gridSize rows and columns
+     * for each block in the matrix, iterate over each pixel searching for black markings
+     * if a marking is found, enter a 1 in the image's corresponding binary matrix
+     * @return a binary matrix with gridSize rows and columns, where 1 represents a marking
+     */
+    public int[][] getMatrix(){
+        int[][] matrix = new int[gridSize][gridSize];
+        int xBlockSize = imageWidth / gridSize;
+        int yBlockSize = imageHeight / gridSize;
+        for(int i=0; i<gridSize; i++) { // iterating rows of the image
+            int startX = i * xBlockSize;
+            int endX;
+            if (i != gridSize - 1)
+                endX = (i + 1) * xBlockSize;
+            else
+                endX = imageWidth;
+            for (int j = 0; j < gridSize; j++) { // iterating columns of the image
+                int startY = j * yBlockSize;
+                int endY;
+                if (j != gridSize - 1)
+                    endY = (j + 1) * yBlockSize;
+                else
+                    endY = imageHeight;
+                matrix[j][i] = containsMarking(startX, endX, startY, endY) ? 1 : 0;
+            }
+        }
+        printMatrix(matrix);
+        return matrix;
+    }
+
+    /**
+     * Prints an image matrix
+     * @param matrix the matrix to print
+     */
+    public static void printMatrix(int[][] matrix){
+        for(int i=0; i<matrix.length; i++){
+            for(int j=0; j<matrix[i].length; j++)
+                System.out.print(matrix[i][j]+"\t\t");
+            System.out.println();
+        }
+    }
 }
