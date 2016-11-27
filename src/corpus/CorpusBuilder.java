@@ -41,6 +41,7 @@ public class CorpusBuilder {
      * Build the corpus by obtaining all information matrices from all data files in given dir
      */
     public static void buildCorpus(){
+        System.out.println("Building corpus...");
         File[] files = new File(corpusDirectory).listFiles();
         HashMap<String, Integer[]> map = new HashMap<>(); // need to use wrapper class in map construct
         for(File f : files) {

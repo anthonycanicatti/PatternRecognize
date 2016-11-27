@@ -17,9 +17,53 @@ public class ImageTransformer {
      */
     public ImageTransformer(BufferedImage image, int gridSize){
         this.image = image;
-        this.imageHeight = image.getHeight();
-        this.imageWidth = image.getWidth();
+        cropImage();
+        this.imageHeight = this.image.getHeight();
+        this.imageWidth = this.image.getWidth();
         this.gridSize = gridSize;
+    }
+
+    /**
+     * Crop surrounding whitespace from input image
+     */
+    private void cropImage(){
+        boolean foundMark = false;
+        int startX = 0, endX = 0, startXMarkings = 0, endXMarkings = 0;
+        for(int i=0; i<image.getWidth(); i++){ // find starting x position from left of image
+            if(containsMarking(i,i+1, 0, image.getHeight()))
+                startXMarkings++;
+            if(startXMarkings >= 5){
+                startX = i;
+                break;
+            }
+        }
+        for(int i=image.getWidth(); i>0; i--){ // find ending x position from right of image
+            if(containsMarking(i-1,i,0,image.getHeight()))
+                endXMarkings++;
+            if(endXMarkings >= 5){
+                endX = i;
+                break;
+            }
+        }
+        int startY = 0, endY = 0, startYMarkings = 0, endYMarkings = 0;
+        for(int j=0; j<image.getHeight(); j++){ // find starting y position from top of image
+            if(containsMarking(0, image.getWidth(), j, j+1))
+                startYMarkings++;
+            if(startYMarkings >= 5){
+                startY = j;
+                break;
+            }
+        }
+        for(int j=image.getHeight(); j>0; j--){ // find ending y position from bottom of image
+            if(containsMarking(0, image.getWidth(), j-1,j))
+                endYMarkings++;
+            if(endYMarkings >= 5){
+                endY = j;
+                break;
+            }
+        }
+        BufferedImage cropped = image.getSubimage(startX, startY, endX-startX, endY-startY);
+        this.image = cropped;
     }
 
     /**
