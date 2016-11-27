@@ -77,11 +77,20 @@ public class ImageTransformer {
                 matrix[j][i] = containsMarking(startX, endX, startY, endY) ? 1 : 0;
             }
         }
+        return unravelMatrix(matrix);
+    }
+
+    /**
+     * Unravel a two dimensional information matrix into a vector - row wise
+     * @param matrix the information matrix to unravel
+     * @return a vector of size (rows*columns) of info matrix unraveled
+     */
+    private int[] unravelMatrix(int[][] matrix){
         int[] infoVector = new int[matrix.length*matrix.length];
         int ivIndex = 0;
         for(int i=0; i<matrix.length; i++){
-            for(int j=0; j<matrix.length; j++) {
-                infoVector[ivIndex] = matrix[i][j]; // very important: row-wise conversion from two dimensional matrix to vector
+            for(int j=0; j<matrix.length; j++){
+                infoVector[ivIndex] = matrix[i][j];
                 ivIndex++;
             }
         }
