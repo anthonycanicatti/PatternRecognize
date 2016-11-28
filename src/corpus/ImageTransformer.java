@@ -1,6 +1,9 @@
 package corpus;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by anthony on 11/26/16.
@@ -17,53 +20,9 @@ public class ImageTransformer {
      */
     public ImageTransformer(BufferedImage image, int gridSize){
         this.image = image;
-        cropImage();
         this.imageHeight = this.image.getHeight();
         this.imageWidth = this.image.getWidth();
         this.gridSize = gridSize;
-    }
-
-    /**
-     * Crop surrounding whitespace from input image
-     */
-    private void cropImage(){
-        boolean foundMark = false;
-        int startX = 0, endX = 0, startXMarkings = 0, endXMarkings = 0;
-        for(int i=0; i<image.getWidth(); i++){ // find starting x position from left of image
-            if(containsMarking(i,i+1, 0, image.getHeight()))
-                startXMarkings++;
-            if(startXMarkings >= 5){
-                startX = i;
-                break;
-            }
-        }
-        for(int i=image.getWidth(); i>0; i--){ // find ending x position from right of image
-            if(containsMarking(i-1,i,0,image.getHeight()))
-                endXMarkings++;
-            if(endXMarkings >= 5){
-                endX = i;
-                break;
-            }
-        }
-        int startY = 0, endY = 0, startYMarkings = 0, endYMarkings = 0;
-        for(int j=0; j<image.getHeight(); j++){ // find starting y position from top of image
-            if(containsMarking(0, image.getWidth(), j, j+1))
-                startYMarkings++;
-            if(startYMarkings >= 5){
-                startY = j;
-                break;
-            }
-        }
-        for(int j=image.getHeight(); j>0; j--){ // find ending y position from bottom of image
-            if(containsMarking(0, image.getWidth(), j-1,j))
-                endYMarkings++;
-            if(endYMarkings >= 5){
-                endY = j;
-                break;
-            }
-        }
-        BufferedImage cropped = image.getSubimage(startX, startY, endX-startX, endY-startY);
-        this.image = cropped;
     }
 
     /**
@@ -84,6 +43,7 @@ public class ImageTransformer {
                 int red = (color & 0x00ff0000) >> 16;
                 int green = (color & 0x0000ff00) >> 8;
                 int blue = (color & 0x000000ff);
+
                 if(red < 100 && green < 100 && blue < 100){
                     foundMark = true;
                     break;
@@ -121,6 +81,7 @@ public class ImageTransformer {
                 matrix[j][i] = containsMarking(startX, endX, startY, endY) ? 1 : 0;
             }
         }
+        printMatrix(matrix);
         return unravelMatrix(matrix);
     }
 
