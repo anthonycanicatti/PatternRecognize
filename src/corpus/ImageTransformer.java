@@ -81,7 +81,7 @@ public class ImageTransformer {
                 matrix[j][i] = containsMarking(startX, endX, startY, endY) ? 1 : 0;
             }
         }
-        printMatrix(matrix);
+        //printMatrix(matrix);
         return unravelMatrix(matrix);
     }
 

@@ -3,6 +3,7 @@ package corpus;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
@@ -40,7 +41,6 @@ public class CorpusBuilder {
      * Build the corpus by obtaining all information matrices from all data files in given dir
      */
     public static void buildCorpus(){
-        System.out.println("Building corpus...");
         File[] files = new File(corpusDirectory).listFiles();
         HashMap<String, int[]> masterMap = new HashMap<>(); // need to use wrapper class in map construct
         for(File f : files) {
@@ -58,6 +58,7 @@ public class CorpusBuilder {
         }
 
         HashMap<Integer, int[]> meanMap = getMeanMap(masterMap);
+        writeDataToCsv(masterMap, "data.csv");
         //printMap(masterMap);
     }
 
@@ -134,6 +135,36 @@ public class CorpusBuilder {
                 vector[i] = (int)wrapper[i];
             }
             System.out.println(Arrays.toString(vector));
+        }
+    }
+
+    /**
+     * Write mean vector data out to CSV
+     * this function is helpful if want to use data for any traditional data mining methods
+     *
+     * @param map the full map of all information vectors for all given data - not means
+     * @param outFile the csv file to write data to
+     */
+    private static void writeDataToCsv(HashMap<String, int[]> map, String outFile){
+        try (FileWriter writer = new FileWriter(outFile)) {
+            for(int i=0; i<gridSize; i++){
+                for(int j=0; j<gridSize; j++)
+                    writer.write("a("+(i+1)+"x"+(j+1)+"),");
+            }
+            writer.write("class\n");
+            Iterator iterator = map.entrySet().iterator();
+            while(iterator.hasNext()){
+                Map.Entry pair = (Map.Entry)iterator.next();
+                String classLabel = (String)pair.getKey();
+                int[] data = (int[])pair.getValue();
+                String line = Arrays.toString(data).replace(" ","").replace("[","")
+                        .replace("]","") + "," + classLabel + "\n";
+                writer.write(line);
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
