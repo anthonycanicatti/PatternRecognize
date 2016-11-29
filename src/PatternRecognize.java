@@ -6,7 +6,7 @@ import corpus.CorpusBuilder;
 public class PatternRecognize {
 
     public static void main(String[] args){
-        CorpusBuilder cb = CorpusBuilder.createBuilder("img");
+        CorpusBuilder cb = CorpusBuilder.createBuilder("img", 20);
         cb.buildCorpus();
     }
 }
